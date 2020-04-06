@@ -23,7 +23,7 @@ public class TwoPlayerBoard implements Board {
 
     @Override
     public Boolean placePieceAt(Move move ,int row, int col) {
-        if(getPieceAt(row,col)==null){
+        if(getPieceAt(row,col)!=null){
             boardGrid[row][col] = move;
             return true;
         }
@@ -33,5 +33,9 @@ public class TwoPlayerBoard implements Board {
     @Override
     public int getBoardSize() {
         return boardSize;
+    }
+    @Override
+    public Move[][] getBoardGrid(){
+        return boardGrid;
     }
 }
