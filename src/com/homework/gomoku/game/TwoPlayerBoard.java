@@ -11,6 +11,7 @@ public class TwoPlayerBoard implements Board {
     List<Move> moveSeq;
 
     public TwoPlayerBoard(int size){
+        boardSize = size;
         boardGrid = new Move[size][size];
         moveSeq = new ArrayList<>();
     }
@@ -22,10 +23,15 @@ public class TwoPlayerBoard implements Board {
 
     @Override
     public Boolean placePieceAt(Move move ,int row, int col) {
-        if(getPieceAt(row,col)!=null){
+        if(getPieceAt(row,col)==null){
             boardGrid[row][col] = move;
             return true;
         }
         return false;
+    }
+
+    @Override
+    public int getBoardSize() {
+        return boardSize;
     }
 }

@@ -18,10 +18,6 @@ public class GamePage extends JPanel {
         return Math.min(150, (this.getWidth() - this.getHeight()) / 2);
     }
 
-    class BoardPane extends JPanel {
-
-    }
-
     public void init() {
         this.setLayout(new BorderLayout());
         this.boardArea = new BoardPane();
