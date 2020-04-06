@@ -22,9 +22,9 @@ public class TwoPlayerBoard implements Board {
     }
 
     @Override
-    public Boolean placePieceAt(Move move ,int row, int col) {
-        if(getPieceAt(row,col)!=null){
-            boardGrid[row][col] = move;
+    public Boolean placeMove(Move move) {
+        if(getPieceAt(move.getRow(), move.getCol())==null){
+            boardGrid[move.getRow()][move.getCol()] = move;
             return true;
         }
         return false;

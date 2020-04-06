@@ -18,15 +18,21 @@ public class TwoPlayerRule implements Rule{
         boolean cont2 = true;
         Move[][] grid = board.getBoardGrid();
         for (int i = 1; i < 5 ; i++){
-            if (cont1 && col + i*colIncrement < boardSize && col + i*colIncrement >= 0 && row + i*rowIncrement < boardSize && row + i*rowIncrement > 0){
-                if (playerColor == grid[col + i*colIncrement][row + i*rowIncrement].getPlayer().getColor()){
+            if (cont1 && col + i*colIncrement < boardSize && col + i*colIncrement >= 0 && row + i*rowIncrement < boardSize && row + i*rowIncrement >= 0){
+                if(grid[row + i*rowIncrement][col + i*colIncrement] == null){
+                    cont1 = false;
+                }
+                else if (playerColor == grid[row + i*rowIncrement][col + i*colIncrement].getPlayer().getColor()){
                     count++;
                 }else{
                     cont1 = false;
                 }
             }
-            if (cont2 && col - i*colIncrement < boardSize && col - i*colIncrement >= 0 && row - i*rowIncrement < boardSize && row - i*rowIncrement > 0){
-                if (playerColor == grid[col - i*colIncrement][row - i*rowIncrement].getPlayer().getColor()){
+            if (cont2 && col - i*colIncrement < boardSize && col - i*colIncrement >= 0 && row - i*rowIncrement < boardSize && row - i*rowIncrement >= 0){
+                if(grid[row - i*rowIncrement][col - i*colIncrement] == null){
+                    cont2 = false;
+                }
+                else if (playerColor == grid[row - i*rowIncrement][col - i*colIncrement].getPlayer().getColor()){
                     count++;
                 }else{
                     cont2 = false;
@@ -45,7 +51,7 @@ public class TwoPlayerRule implements Rule{
     }
 
     public boolean isOverlap(Board board, Move move){
-        if (board.getBoardGrid()[move.getCol()][move.getRow()] != null){
+        if (board.getPieceAt(move.getRow(), move.getCol()) != null){
             return false;
         }
         return true;
