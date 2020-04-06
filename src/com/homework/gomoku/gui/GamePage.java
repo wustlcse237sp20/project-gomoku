@@ -2,52 +2,30 @@ package com.homework.gomoku.gui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 public class GamePage extends JPanel {
 
+    JPanel boardArea;
+    boolean waitOnClick;
     public GamePage() {
         super();
         init();
     }
 
+    private int borderDim() {
+        return Math.min(150, (this.getWidth() - this.getHeight()) / 2);
+    }
+
     class BoardPane extends JPanel {
-        public void paintComponent(Graphics g) {
-            g.setColor(Color.BLACK);
-            int height = this.getHeight();
-            int width = this.getWidth();
-            int rows = 15;
-            int hRem = width % rows;
-            int vRem = height % rows;
-            int hGap = width / rows;
-            int vGap = height / rows;
-            int i = 0;
-            while (i < height) {
-                g.drawLine(0, i, width, i);
-                if (vRem > 0) {
-                    i += vGap + 1;
-                    vRem -= 1;
-                } else {
-                    i += vGap;
-                }
-            }
-            g.drawLine(0, i-1, width, i-1);
-            i = 0;
-            while (i < width) {
-                g.drawLine(i, 0, i, height);
-                if (hRem > 0) {
-                    i += hGap + 1;
-                    hRem -= 1;
-                } else {
-                    i += hGap;
-                }
-            }
-            g.drawLine(i-1, 0, i-1, height);
-        }
+
     }
 
     public void init() {
         this.setLayout(new BorderLayout());
-        this.add(new BoardPane(), BorderLayout.CENTER);
+        this.boardArea = new BoardPane();
+        this.add(boardArea, BorderLayout.CENTER);
         JPanel leftWing = new JPanel();
         leftWing.setBackground(Color.cyan);
         leftWing.setPreferredSize(new Dimension(150, 500));
@@ -56,6 +34,74 @@ public class GamePage extends JPanel {
         rightWing.setPreferredSize(new Dimension(150, 500));
         this.add(leftWing, BorderLayout.LINE_START);
         this.add(rightWing, BorderLayout.LINE_END);
+        boardArea.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int height = boardArea.getHeight();
+                int width = boardArea.getWidth();
+                int rows = 15;
+                int hRem = width % rows;
+                int vRem = height % rows;
+                int hGap = width / rows;
+                int vGap = height / rows;
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        });
     }
 
+    public JPanel getBoard(){
+        return this.boardArea;
+    }
+
+    public void listenOnMove(){
+        waitOnClick = true;
+        boardArea.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if(waitOnClick){
+                    System.out.println("hello");
+                    waitOnClick = false;
+                }
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        });
+    }
 }

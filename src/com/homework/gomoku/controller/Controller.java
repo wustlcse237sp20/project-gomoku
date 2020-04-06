@@ -1,10 +1,8 @@
 package com.homework.gomoku.controller;
 
-import com.homework.gomoku.game.Board;
-import com.homework.gomoku.game.Move;
-import com.homework.gomoku.game.Player;
-import com.homework.gomoku.game.PlayerMove;
+import com.homework.gomoku.game.*;
 import com.homework.gomoku.gui.EntryFrame;
+import com.homework.gomoku.gui.GamePage;
 
 import java.awt.event.*;
 import java.awt.*;
@@ -12,7 +10,7 @@ import javax.swing.*;
 
 public class Controller {
 
-    static JFrame mainFrame;
+    static EntryFrame mainFrame;
     static JPanel p;
 
     public Controller(){
@@ -30,12 +28,13 @@ public class Controller {
             @Override
             public Move getMove(Board board) {
                 int[] loc = new int[2];
-                mainFrame.addMouseListener(new MouseListener() {
+                boolean[] b = new boolean[1];
+                b[0] = true;
+                mainFrame.getBoardArea().addMouseListener(new MouseListener() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
-                        loc[0] = 0;
-                        loc[1] = 0;
-                        mainFrame.removeMouseListener(this);
+                        loc[0] = e.getX();
+                        loc[1] = e.getY();
                     }
 
                     @Override
