@@ -1,63 +1,76 @@
 package com.homework.gomoku.game;
 
-public class TwoPlayerRule implements Rule{
-    
-    @Override
-    public boolean isEnd(Board board, Move move){
-        return helper(board, move, 1, 0) || helper(board, move, 1, 1) || helper(board, move, 0, 1) || helper(board, move, 1, -1);
+public class TwoPlayerRule implements Rule {
+
+    enum Direction {
+        EAST, NORTH, NORTHEAST, NORTHWEST
     }
 
-    public boolean helper(Board board, Move move, int colIncrement, int rowIncrement){
-        boolean end = false;
+    @Override
+    public boolean isEnd(Board board, Move move) {
+        return isFiveOnDir(board, move, Direction.EAST) ||
+                isFiveOnDir(board, move, Direction.NORTHEAST) ||
+                isFiveOnDir(board, move, Direction.NORTH) ||
+                isFiveOnDir(board, move, Direction.NORTHWEST);
+    }
+
+    private boolean isInBoard(Board board, int row, int col) {
+        return row < board.getBoardSize() && row > 0 && col < board.getBoardSize() && col >= 0;
+    }
+
+    public boolean isFiveOnDir(Board board, Move move, Direction dir) {
+        int rowIncrement = 0;
+        int colIncrement = 0;
+        switch (dir) {
+                case EAST:
+                rowIncrement = 1;
+                break;
+            case NORTH:
+                colIncrement = 1;
+                break;
+            case NORTHEAST:
+                rowIncrement = 1;
+                colIncrement = 1;
+                break;
+            case NORTHWEST:
+                rowIncrement = 1;
+                colIncrement = -1;
+        }
         int col = move.getCol();
         int row = move.getRow();
         boolean playerColor = move.getPlayer().getColor();
-        int boardSize = board.getBoardSize();
         int count = 1;
-        boolean cont1 = true;
-        boolean cont2 = true;
-        Move[][] grid = board.getBoardGrid();
-        for (int i = 1; i < 5 ; i++){
-            if (cont1 && col + i*colIncrement < boardSize && col + i*colIncrement >= 0 && row + i*rowIncrement < boardSize && row + i*rowIncrement >= 0){
-                if(grid[row + i*rowIncrement][col + i*colIncrement] == null){
-                    cont1 = false;
-                }
-                else if (playerColor == grid[row + i*rowIncrement][col + i*colIncrement].getPlayer().getColor()){
-                    count++;
-                }else{
-                    cont1 = false;
-                }
-            }
-            if (cont2 && col - i*colIncrement < boardSize && col - i*colIncrement >= 0 && row - i*rowIncrement < boardSize && row - i*rowIncrement >= 0){
-                if(grid[row - i*rowIncrement][col - i*colIncrement] == null){
-                    cont2 = false;
-                }
-                else if (playerColor == grid[row - i*rowIncrement][col - i*colIncrement].getPlayer().getColor()){
-                    count++;
-                }else{
-                    cont2 = false;
-                }
-            }
-            if (count >= 5){
-                return true;
+        for (int i = 1; i < 5; i++) {
+            int nei_row = row + i * rowIncrement;
+            int nei_col = col + i * colIncrement;
+            if (isInBoard(board, nei_row, nei_col) && board.getPieceAt(nei_row, nei_col) != null && board.getPieceAt(nei_row, nei_col).getPlayer().getColor() == playerColor) {
+                count++;
+            } else {
+                break;
             }
         }
-        return end;
+        for (int i = 1; i < 5; i++) {
+            int nei_row = row - i * rowIncrement;
+            int nei_col = col - i * colIncrement;
+            if (isInBoard(board, nei_row, nei_col) && board.getPieceAt(nei_row, nei_col) != null && board.getPieceAt(nei_row, nei_col).getPlayer().getColor() == playerColor) {
+                count++;
+            } else {
+                break;
+            }
+        }
+        return count == 5;
     }
 
     @Override
-    public boolean isValidMove(Board board, Move move){
+    public boolean isValidMove(Board board, Move move) {
         return isOverlap(board, move) && ruleBreaker(board, move);
     }
 
-    public boolean isOverlap(Board board, Move move){
-        if (board.getPieceAt(move.getRow(), move.getCol()) != null){
-            return false;
-        }
-        return true;
+    public boolean isOverlap(Board board, Move move) {
+        return board.getPieceAt(move.getRow(), move.getCol()) == null;
     }
 
-    public boolean ruleBreaker(Board board, Move move){
+    public boolean ruleBreaker(Board board, Move move) {
         return true;
     }
 }
