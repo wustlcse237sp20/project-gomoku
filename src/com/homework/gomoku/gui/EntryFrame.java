@@ -14,7 +14,7 @@ public class EntryFrame extends JFrame {
     int panelHeight = 500;
     Game game;
     GamePage gamePanel;
-    JPanel entryPage;
+    EntryPage entryPage;
     public EntryFrame(String title, Game game){
         super(title);
         this.game = game;
@@ -24,9 +24,16 @@ public class EntryFrame extends JFrame {
     public void init(){
         this.setSize(panelWidth,  panelHeight);
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        this.gamePanel = new GamePage(game);
-        entryPage = new EntryPage(this, gamePanel);
+        entryPage = new EntryPage();
         this.setContentPane(entryPage);
+    }
+
+    public EntryPage getEntryPage(){
+        return entryPage;
+    }
+
+    public GamePage getGamePanel(){
+        return gamePanel;
     }
 
 }

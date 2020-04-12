@@ -7,14 +7,11 @@ import java.awt.event.ActionListener;
 
 public class EntryPage extends JPanel {
 
-    JFrame parentFrame;
-    JPanel gamePage;
     JPanel tutorialPage;
-
-    public EntryPage(JFrame pFrame, JPanel gamePage) {
+    JButton newGameBut;
+    JButton exitGameBut;
+    public EntryPage() {
         super(new GridBagLayout());
-        this.parentFrame = pFrame;
-        this.gamePage = gamePage;
         init();
     }
 
@@ -25,19 +22,10 @@ public class EntryPage extends JPanel {
         buttonsLayout.setHgap(40);
         buttonsLayout.setVgap(20);
         buttonsPanel.setLayout(buttonsLayout);
-        JButton newGameBut = new JButton("New Game");
+        newGameBut = new JButton("New Game");
         JButton loadGameBut = new JButton("Load Game");
         JButton tutorialBut = new JButton("Tutorial");
-        JButton exitGameBut = new JButton("Exit to Desktop");
-        exitGameBut.addActionListener(e -> parentFrame.dispose());
-        newGameBut.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                parentFrame.setContentPane(gamePage);
-                parentFrame.revalidate();
-                parentFrame.repaint();
-            }
-        });
+        exitGameBut = new JButton("Exit to Desktop");
         buttonsPanel.add(newGameBut);
         buttonsPanel.add(loadGameBut);
         buttonsPanel.add(tutorialBut);
@@ -51,4 +39,11 @@ public class EntryPage extends JPanel {
         this.add(buttonsPanel, c);
     }
 
+    public JButton getNewGameBut(){
+        return newGameBut;
+    }
+
+    public JButton getExitBut(){
+        return exitGameBut;
+    }
 }

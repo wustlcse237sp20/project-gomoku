@@ -22,7 +22,7 @@ public class TwoPlayerRule implements Rule {
         int rowIncrement = 0;
         int colIncrement = 0;
         switch (dir) {
-                case EAST:
+            case EAST:
                 rowIncrement = 1;
                 break;
             case NORTH:
@@ -43,7 +43,8 @@ public class TwoPlayerRule implements Rule {
         for (int i = 1; i < 5; i++) {
             int nei_row = row + i * rowIncrement;
             int nei_col = col + i * colIncrement;
-            if (isInBoard(board, nei_row, nei_col) && board.getPieceAt(nei_row, nei_col) != null && board.getPieceAt(nei_row, nei_col).getPlayer().getColor() == playerColor) {
+            if (isInBoard(board, nei_row, nei_col) && board.getPieceAt(nei_row, nei_col) != null
+                    && board.getPieceAt(nei_row, nei_col).getPlayer().getColor() == playerColor) {
                 count++;
             } else {
                 break;
@@ -52,7 +53,8 @@ public class TwoPlayerRule implements Rule {
         for (int i = 1; i < 5; i++) {
             int nei_row = row - i * rowIncrement;
             int nei_col = col - i * colIncrement;
-            if (isInBoard(board, nei_row, nei_col) && board.getPieceAt(nei_row, nei_col) != null && board.getPieceAt(nei_row, nei_col).getPlayer().getColor() == playerColor) {
+            if (isInBoard(board, nei_row, nei_col) && board.getPieceAt(nei_row, nei_col) != null
+                    && board.getPieceAt(nei_row, nei_col).getPlayer().getColor() == playerColor) {
                 count++;
             } else {
                 break;
