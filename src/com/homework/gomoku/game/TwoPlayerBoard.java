@@ -34,8 +34,6 @@ public class TwoPlayerBoard implements Board {
     public int getBoardSize() {
         return boardSize;
     }
-    @Override
-    public Move[][] getBoardGrid(){
-        return boardGrid;
-    }
+
+
 }
