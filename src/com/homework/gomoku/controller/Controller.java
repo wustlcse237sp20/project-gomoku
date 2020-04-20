@@ -70,6 +70,7 @@ public class Controller {
                 int rowNum = gridRound(boardArea.getHeight(), e.getY(), game.getBoard().getBoardSize());
                 int colNum = gridRound(boardArea.getWidth(), e.getX(), game.getBoard().getBoardSize());
                 Move cMove = new PlayerMove(rowNum, colNum, game.getCurrentPlayer());
+                //Move tMove = new TMove(tp.setMove())
                 if(game.isValidMove(cMove)){
                     if(game.isEnd(cMove)){
                         game.getBoard().placeMove(cMove);
