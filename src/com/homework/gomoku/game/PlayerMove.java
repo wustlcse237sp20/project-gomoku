@@ -1,6 +1,9 @@
 package com.homework.gomoku.game;
 
-public class PlayerMove implements Move {
+import java.io.Serializable;
+import java.rmi.ServerError;
+
+public class PlayerMove implements Move, Serializable {
 
     int row, col;
     Player player;

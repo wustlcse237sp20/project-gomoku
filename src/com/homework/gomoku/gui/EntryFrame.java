@@ -15,9 +15,8 @@ public class EntryFrame extends JFrame {
     Game game;
     GamePage gamePanel;
     EntryPage entryPage;
-    public EntryFrame(String title, Game game){
+    public EntryFrame(String title){
         super(title);
-        this.game = game;
         init();
     }
 

@@ -1,6 +1,8 @@
 package com.homework.gomoku.game;
 
-public class Game {
+import java.io.Serializable;
+
+public class Game implements Serializable {
     Board board;
     Player player1;
     Player player2;
