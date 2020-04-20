@@ -14,7 +14,7 @@ public class GamePage extends JPanel {
 
     JPanel boardArea;
     Game game;
-
+    JButton saveBut;
     public GamePage(Game game) {
         super();
         this.game = game;
@@ -28,6 +28,8 @@ public class GamePage extends JPanel {
         JPanel leftWing = new JPanel();
         leftWing.setBackground(Color.cyan);
         leftWing.setPreferredSize(new Dimension(150, 500));
+        saveBut = new JButton("Save Game");
+        leftWing.add(saveBut);
         JPanel rightWing = new JPanel();
         rightWing.setBackground(Color.cyan);
         rightWing.setPreferredSize(new Dimension(150, 500));
@@ -37,6 +39,10 @@ public class GamePage extends JPanel {
 
     public JPanel getBoardArea(){
         return boardArea;
+    }
+
+    public JButton getSaveBut() {
+        return saveBut;
     }
 
 }

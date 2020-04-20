@@ -1,6 +1,8 @@
 package com.homework.gomoku.game;
 
-public class HumanPlayer implements Player {
+import java.io.Serializable;
+
+public class HumanPlayer implements Player, Serializable {
 
     boolean isBlack;
 
@@ -16,5 +18,10 @@ public class HumanPlayer implements Player {
     @Override
     public Move getMove(Board board) {
         return null;
+    }
+
+    @Override
+    public void toByte() {
+
     }
 }

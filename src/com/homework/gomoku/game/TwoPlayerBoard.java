@@ -1,9 +1,10 @@
 package com.homework.gomoku.game;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TwoPlayerBoard implements Board {
+public class TwoPlayerBoard implements Board, Serializable {
 
     int boardSize;
 
