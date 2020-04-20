@@ -1,6 +1,8 @@
 package com.homework.gomoku.game;
 
-public class TwoPlayerRule implements Rule {
+import java.io.Serializable;
+
+public class TwoPlayerRule implements Rule, Serializable {
 
     enum Direction {
         EAST, NORTH, NORTHEAST, NORTHWEST
