@@ -1,5 +1,23 @@
 # cse237-project
 
+# 04/20/2020
+
+## What user stories were completed this iteration?
+In this iteration, we tentatively experiment on more advanced features including save/load game feature, tutorial feature. The save/load game feature now supports one saving slot. However, upon a decision of the UI, we can easily adapt it to a multi-save feature. We also made the UI easier to use compared to last iteration.
+
+## What user stories do you intend to complete next iteration?
+- The UI for tutorial session.
+- Automated play algorithm for user to play against a computer player.
+- A more intuitive navigation system, the funtionality is mostly complete, but they are not intuitive enough, for example, to exit to main page, users must click on save game, we will improve this by adding buttons to the UI.
+
+## Is there anything that you implemented but doesn't currently work?
+- We implemented the tutorial player, whose plays are fixed to teach users how to play the game. The backend logic is complete, but we need to design a tutorial choosing page, so tutorial feature is not yet available.
+
+## What commands are needed to compile and run your code from the command line (or better yet, provide a script that people can use to run your program!)
+- Simply run the run.sh shell file using Bash or any linux cmd.
+
+# 04/06/2020
+
 ## What user stories were completed this iteration?
 The most important  user story that we completed during this iteration is a basic two human players game. It is supportted by a complete UI design and front-end implementation, and a modulized backend game coordinator.
 
