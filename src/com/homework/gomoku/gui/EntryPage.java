@@ -33,6 +33,7 @@ public class EntryPage extends JPanel {
         buttonsPanel.add(loadGameBut);
         buttonsPanel.add(tutorialBut);
         buttonsPanel.add(exitGameBut);
+        
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 0;
@@ -40,6 +41,7 @@ public class EntryPage extends JPanel {
         c.gridx = 0;
         c.gridy = 1;
         this.add(buttonsPanel, c);
+
     }
 
     public JButton getNewGameBut(){

@@ -8,6 +8,14 @@ import com.homework.gomoku.gui.TutorialPane;
 import java.awt.event.*;
 import java.awt.*;
 import java.io.*;
+
+import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.Timer;
+
+
 import java.text.SimpleDateFormat;
 import javax.swing.*;
 
@@ -19,6 +27,15 @@ public class Controller {
     GamePage gp;
     JDialog loadOptions;
     File saveDir;
+    Move saverMove;
+    public int movesCounter = 0;
+    public int totalMovesPossible = 15*15;
+    public int binaryFlagforCurrenPlayer = 1;
+
+
+
+
+    	
 
     public Controller() {
         mainFrame = new EntryFrame("new game");
@@ -65,6 +82,7 @@ public class Controller {
         return loc > rem * (gap + 1) ? (int) Math.round((double) loc / (gap + 1)) :
                 (int) Math.round((double) (loc - rem * (gap + 1)) / gap) + rem;
     }
+
 
     private void makeTutGame(Tutorial tut) {
         gp = new GamePage(game);
@@ -146,6 +164,84 @@ public class Controller {
                 System.out.println(ioe.getMessage());
             }
         });
+
+        //complete the undo action
+        gp.getUndoBut().addActionListener(e->{
+        	try {
+        		game.getBoard().undoMove(saverMove);
+        		gp.repaint();
+                game.nextTurn();
+                movesCounter = movesCounter -1;
+                totalMovesPossible = totalMovesPossible +1;
+                String castedMovesCounter = Integer.toString(movesCounter);
+                gp.movesUpdate.setText(castedMovesCounter);
+                String castedMovesLeftCounter = Integer.toString(totalMovesPossible);
+                gp.totalMovesUpdate.setText(castedMovesLeftCounter);
+                gp.totalMovesUpdate.setForeground(Color.red);
+                gp.movesUpdate.setForeground(Color.red);
+                
+                
+                if(binaryFlagforCurrenPlayer==1) {
+                    binaryFlagforCurrenPlayer = 0;
+                    gp.currentPlayerStatus.setText("WHITE");
+                    gp.currentPlayerStatus.setForeground(Color.WHITE);
+                }
+                else if(binaryFlagforCurrenPlayer==0) {
+                    binaryFlagforCurrenPlayer = 1;
+                    gp.currentPlayerStatus.setText("BLACK");
+                    gp.currentPlayerStatus.setForeground(Color.BLACK);
+                }
+                
+                
+        	}
+        	catch(Exception ioe) {
+        		System.out.println(ioe.getMessage());
+        	}
+        });
+        
+        //complete the color change function
+        gp.getColorChangeBut().addActionListener(e->{
+        	try {
+        		double switchSelector = 1*Math.random();
+        		if(switchSelector<0.33) {
+            		gp.leftWing.setBackground(Color.GRAY);
+            		gp.rightWing.setBackground(Color.GRAY);
+        		}
+        		if(switchSelector>=0.33) {
+        			if(switchSelector<0.66) {
+                		gp.leftWing.setBackground(Color.GREEN);
+                		gp.rightWing.setBackground(Color.GREEN);
+        			}
+        			else {
+                		gp.leftWing.setBackground(Color.YELLOW);
+                		gp.rightWing.setBackground(Color.YELLOW);
+        			}
+        		}
+
+        	}
+        	catch(Exception ioe) {
+        		System.out.println(ioe.getMessage());
+        	}
+        });
+        
+        
+    	Timer timer = new Timer();
+    	TimeCount tc = new TimeCount();
+    	timer.schedule(tc, 0, 1000);
+    	Runnable helloRunnable = new Runnable() {
+    	    public void run() {
+    			if (tc.secondsD<10) {
+    				gp.tickerUpdate.setText(tc.minD + ": 0" + tc.secondsD);
+    				}
+    			else {
+    				gp.tickerUpdate.setText(tc.minD + ": " + tc.secondsD );
+    				}
+    	    }
+    	};
+    	
+    	ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+    	executor.scheduleAtFixedRate(helloRunnable, 0, 1, TimeUnit.SECONDS);
+        
         gp.getExitBut().addActionListener(e -> {
             mainFrame.dispose();
         });
@@ -155,15 +251,20 @@ public class Controller {
             mainFrame.repaint();
         });
         gp.getPromptText().setText("Enjoy your game");
+
         JPanel boardArea = gp.getBoardArea();
+
         boardArea.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 int rowNum = gridRound(boardArea.getHeight(), e.getY(), game.getBoard().getBoardSize());
                 int colNum = gridRound(boardArea.getWidth(), e.getX(), game.getBoard().getBoardSize());
                 Move cMove = new PlayerMove(rowNum, colNum, game.getCurrentPlayer());
-                if (game.isValidMove(cMove)) {
-                    if (game.isEnd(cMove)) {
+                System.out.println(cMove);
+                saverMove = cMove;
+                //Move tMove = new TMove(tp.setMove())
+                if(game.isValidMove(cMove)){
+                    if(game.isEnd(cMove)){
                         game.getBoard().placeMove(cMove);
                         String winSide = game.getCurrentPlayer().getColor() ? "Black" : "White";
                         gp.getPromptText().setText(winSide + " wins");
@@ -174,6 +275,27 @@ public class Controller {
                         gp.getPromptText().setText("");
                         gp.repaint();
                         game.nextTurn();
+                        movesCounter = movesCounter +1;
+                        String castedMovesCounter = Integer.toString(movesCounter);
+                        gp.movesUpdate.setText(castedMovesCounter);
+
+                        totalMovesPossible = totalMovesPossible -1;
+                        String castedMovesLeftCounter = Integer.toString(totalMovesPossible);
+                        gp.totalMovesUpdate.setText(castedMovesLeftCounter);
+                        gp.totalMovesUpdate.setForeground(Color.red);
+                        gp.movesUpdate.setForeground(Color.red);
+                        
+                        if(binaryFlagforCurrenPlayer==1) {
+                            binaryFlagforCurrenPlayer = 0;
+                            gp.currentPlayerStatus.setText("WHITE");
+                            gp.currentPlayerStatus.setForeground(Color.WHITE);
+                        }
+                        else if(binaryFlagforCurrenPlayer==0) {
+                            binaryFlagforCurrenPlayer = 1;
+                            gp.currentPlayerStatus.setText("BLACK");
+                            gp.currentPlayerStatus.setForeground(Color.BLACK);
+                        }
+
                     }
                 } else {
                     gp.getPromptText().setText("Invalid move");
@@ -253,3 +375,6 @@ public class Controller {
         return tuts;
     }
 }
+
+
+

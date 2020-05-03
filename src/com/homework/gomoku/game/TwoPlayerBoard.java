@@ -30,6 +30,15 @@ public class TwoPlayerBoard implements Board, Serializable {
         }
         return false;
     }
+    
+    
+    //just need to determine how to grab the last move
+    public Boolean undoMove(Move move) {
+    	if(getPieceAt(move.getRow(),move.getCol())!=null) {
+    		boardGrid[move.getRow()][move.getCol()] = null;
+    	}
+            return false;
+    }
 
     @Override
     public int getBoardSize() {
