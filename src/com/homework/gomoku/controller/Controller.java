@@ -48,7 +48,7 @@ public class Controller {
                 tp.add(tutBut);
                 tutBut.addActionListener(e1 -> {
                     game = new Game(new TwoPlayerBoard(15), t.getPlyr1(), t.getPlyr2(), new TwoPlayerRule());
-                    makeNewGame();
+                    makeTutGame(t);
                     mainFrame.setContentPane(gp);
                     mainFrame.revalidate();
                     mainFrame.repaint();
@@ -87,23 +87,24 @@ public class Controller {
             public void mouseClicked(MouseEvent e) {
                 int rowNum = gridRound(boardArea.getHeight(), e.getY(), game.getBoard().getBoardSize());
                 int colNum = gridRound(boardArea.getWidth(), e.getX(), game.getBoard().getBoardSize());
-                Move cMove = new PlayerMove(rowNum, colNum, game.getCurrentPlayer());
-                if (game.isValidMove(cMove)) {
-                    if (game.isEnd(cMove)) {
-                        game.getBoard().placeMove(cMove);
-                        String winSide = game.getCurrentPlayer().getColor()?"Black":"White";
-                        gp.getPromptText().setText(winSide + " wins");
+                Move expectedMove = game.getCurrentPlayer().getMove(game);
+                if (rowNum == expectedMove.getRow() && colNum == expectedMove.getCol()) {
+                    if (game.isEnd(expectedMove)) {
+                        game.getBoard().placeMove(expectedMove);
+                        gp.getPromptText().setText("You win");
                         gp.repaint();
                         boardArea.removeMouseListener(this);
                     } else {
-                        game.getBoard().placeMove(cMove);
-                        gp.getPromptText().setText("");
-                        gp.repaint();
+                        game.getBoard().placeMove(expectedMove);
+                        gp.getPromptText().setText(tut.getInGameMessage(game.getNumTurn() / 2));
                         game.nextTurn();
+                        expectedMove = game.getCurrentPlayer().getMove(game);
+                        game.getBoard().placeMove(expectedMove);
+                        game.nextTurn();
+                        gp.repaint();
                     }
                 } else {
-                    gp.getPromptText().setText("Invalid move");
-                    gp.repaint();
+                    gp.getPromptText().setText("You placed on (" + rowNum + "," + colNum + "), place on (" + expectedMove.getRow() + "," + expectedMove.getCol() + ") to win");
                 }
             }
 
@@ -161,10 +162,10 @@ public class Controller {
                 int rowNum = gridRound(boardArea.getHeight(), e.getY(), game.getBoard().getBoardSize());
                 int colNum = gridRound(boardArea.getWidth(), e.getX(), game.getBoard().getBoardSize());
                 Move cMove = new PlayerMove(rowNum, colNum, game.getCurrentPlayer());
-                if(game.isValidMove(cMove)){
-                    if(game.isEnd(cMove)){
+                if (game.isValidMove(cMove)) {
+                    if (game.isEnd(cMove)) {
                         game.getBoard().placeMove(cMove);
-                        String winSide = game.getCurrentPlayer().getColor()?"Black":"White";
+                        String winSide = game.getCurrentPlayer().getColor() ? "Black" : "White";
                         gp.getPromptText().setText(winSide + " wins");
                         gp.repaint();
                         boardArea.removeMouseListener(this);
@@ -237,8 +238,17 @@ public class Controller {
     private Tutorial[] generateTutorials() {
         Tutorial[] tuts = new Tutorial[1];
         Tutorial tut = new Tutorial("How to win the game?");
-        tut.setPlayers(null, null);
-        tut.setStartMessage("Hahaha");
+        TutorialPlayer tp1 = new TutorialPlayer(true);
+        TutorialPlayer tp2 = new TutorialPlayer(false);
+        tp1.setMoves(new int[]{7, 8, 9, 10, 11}, new int[]{7, 7, 7, 7, 7});
+        tp2.setMoves(new int[]{7, 8, 9, 10}, new int[]{8, 8, 8, 8});
+        tut.setPlayers(tp1, tp2);
+        tut.setGameMessage(new String[]{"Place move on (8,7)",
+                "Place move on (9,7)",
+                "Place move on (10,7)",
+                "Place move on (11,7)"
+        });
+        tut.setStartMessage("Place move on (7,7) to get started");
         tuts[0] = tut;
         return tuts;
     }
