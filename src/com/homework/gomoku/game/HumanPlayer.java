@@ -16,12 +16,7 @@ public class HumanPlayer implements Player, Serializable {
     }
 
     @Override
-    public Move getMove(Board board) {
+    public Move getMove(Game game) {
         return null;
-    }
-
-    @Override
-    public void toByte() {
-
     }
 }
