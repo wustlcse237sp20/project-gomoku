@@ -23,6 +23,8 @@ public class BoardPane extends JPanel {
     }
 
     public void paintComponent(Graphics g) {
+    	
+    	
         g.setColor(Color.BLACK);
         int height = this.getHeight();
         int width = this.getWidth();

@@ -25,6 +25,7 @@ public class EntryFrame extends JFrame {
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         entryPage = new EntryPage();
         this.setContentPane(entryPage);
+
     }
 
     public EntryPage getEntryPage(){
