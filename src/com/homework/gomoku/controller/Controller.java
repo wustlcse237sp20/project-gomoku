@@ -3,10 +3,12 @@ package com.homework.gomoku.controller;
 import com.homework.gomoku.game.*;
 import com.homework.gomoku.gui.EntryFrame;
 import com.homework.gomoku.gui.GamePage;
+import com.homework.gomoku.gui.TutorialPane;
 
 import java.awt.event.*;
 import java.awt.*;
 import java.io.*;
+import java.text.SimpleDateFormat;
 import javax.swing.*;
 
 public class Controller {
@@ -18,16 +20,15 @@ public class Controller {
     JDialog loadOptions;
     File saveDir;
 
-    public Controller(){
+    public Controller() {
         mainFrame = new EntryFrame("new game");
     }
 
-    public void launch(){
+    public void launch() {
         saveDir = new File("./saves");
         saveDir.mkdir();
-        System.out.println(saveDir.getAbsolutePath());
         mainFrame.setVisible(true);
-        mainFrame.getEntryPage().getExitBut().addActionListener(e->mainFrame.dispose());
+        mainFrame.getEntryPage().getExitBut().addActionListener(e -> mainFrame.dispose());
         mainFrame.getEntryPage().getNewGameBut().addActionListener(e -> {
             game = new Game(new TwoPlayerBoard(15), new HumanPlayer(true), new HumanPlayer(false), new TwoPlayerRule());
             makeNewGame();
@@ -38,31 +39,48 @@ public class Controller {
         mainFrame.getEntryPage().getLoadBut().addActionListener(e -> {
             makeLoadPane();
         });
+
+        mainFrame.getEntryPage().getTutorialBut().addActionListener(e -> {
+            Tutorial[] tuts = generateTutorials();
+            TutorialPane tp = new TutorialPane(tuts);
+            for (Tutorial t : tuts) {
+                JButton tutBut = new JButton(t.getTutName());
+                tp.add(tutBut);
+                tutBut.addActionListener(e1 -> {
+                    game = new Game(new TwoPlayerBoard(15), t.getPlyr1(), t.getPlyr2(), new TwoPlayerRule());
+                    makeNewGame();
+                    mainFrame.setContentPane(gp);
+                    mainFrame.revalidate();
+                    mainFrame.repaint();
+                    tp.dispose();
+                });
+            }
+            tp.setVisible(true);
+        });
     }
 
-    private int gridRound(int length, int loc, int numInt){
+    private int gridRound(int length, int loc, int numInt) {
         int rem = length % numInt;
         int gap = length / numInt;
-        return loc > rem * (gap+1)? (int)Math.round((double)loc/(gap+1)):
-                (int)Math.round((double)(loc-rem*(gap+1))/gap)+rem;
+        return loc > rem * (gap + 1) ? (int) Math.round((double) loc / (gap + 1)) :
+                (int) Math.round((double) (loc - rem * (gap + 1)) / gap) + rem;
     }
 
-    private void makeNewGame(){
+    private void makeTutGame(Tutorial tut) {
         gp = new GamePage(game);
         gp.getSaveBut().addActionListener(e -> {
-            try{
-                FileOutputStream fos = new FileOutputStream("./saves/game.ser");
-                ObjectOutputStream myObjectOutputStream = new ObjectOutputStream(fos);
-                myObjectOutputStream.writeObject(game);
-                myObjectOutputStream.close();
-                mainFrame.setContentPane(mainFrame.getEntryPage());
-                mainFrame.revalidate();
-                mainFrame.repaint();
-            }
-            catch(Exception ioe){
-                System.out.println(ioe.getMessage());
-            }
+            gp.getPromptText().setText("Your can't save a tutorial game");
+            gp.repaint();
         });
+        gp.getExitBut().addActionListener(e -> {
+            mainFrame.dispose();
+        });
+        gp.getMainBut().addActionListener(e -> {
+            mainFrame.setContentPane(mainFrame.getEntryPage());
+            mainFrame.revalidate();
+            mainFrame.repaint();
+        });
+        gp.getPromptText().setText(tut.getStartMessage());
         JPanel boardArea = gp.getBoardArea();
         boardArea.addMouseListener(new MouseListener() {
             @Override
@@ -70,27 +88,95 @@ public class Controller {
                 int rowNum = gridRound(boardArea.getHeight(), e.getY(), game.getBoard().getBoardSize());
                 int colNum = gridRound(boardArea.getWidth(), e.getX(), game.getBoard().getBoardSize());
                 Move cMove = new PlayerMove(rowNum, colNum, game.getCurrentPlayer());
-                if(game.isValidMove(cMove)){
-                    if(game.isEnd(cMove)){
+                if (game.isValidMove(cMove)) {
+                    if (game.isEnd(cMove)) {
                         game.getBoard().placeMove(cMove);
+                        String winSide = game.getCurrentPlayer().getColor()?"Black":"White";
+                        gp.getPromptText().setText(winSide + " wins");
                         gp.repaint();
-                        JDialog d = new JDialog();
-                        d.add(new JLabel("GameEnd"));
-                        d.setSize(200, 200);
-                        d.setVisible(true);
                         boardArea.removeMouseListener(this);
-                    }
-                    else{
+                    } else {
                         game.getBoard().placeMove(cMove);
+                        gp.getPromptText().setText("");
                         gp.repaint();
                         game.nextTurn();
                     }
+                } else {
+                    gp.getPromptText().setText("Invalid move");
+                    gp.repaint();
                 }
-                else{
-                    JDialog d = new JDialog();
-                    d.add(new JLabel("Invalid Move"));
-                    d.setSize(200, 200);
-                    d.setVisible(true);
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        });
+    }
+
+    private void makeNewGame() {
+        gp = new GamePage(game);
+        gp.getSaveBut().addActionListener(e -> {
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss");
+                FileOutputStream fos = new FileOutputStream("./saves/" + sdf.format(System.currentTimeMillis()) + ".ser");
+                ObjectOutputStream myObjectOutputStream = new ObjectOutputStream(fos);
+                myObjectOutputStream.writeObject(game);
+                myObjectOutputStream.close();
+                mainFrame.setContentPane(mainFrame.getEntryPage());
+                mainFrame.revalidate();
+                mainFrame.repaint();
+            } catch (Exception ioe) {
+                System.out.println(ioe.getMessage());
+            }
+        });
+        gp.getExitBut().addActionListener(e -> {
+            mainFrame.dispose();
+        });
+        gp.getMainBut().addActionListener(e -> {
+            mainFrame.setContentPane(mainFrame.getEntryPage());
+            mainFrame.revalidate();
+            mainFrame.repaint();
+        });
+        gp.getPromptText().setText("Enjoy your game");
+        JPanel boardArea = gp.getBoardArea();
+        boardArea.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int rowNum = gridRound(boardArea.getHeight(), e.getY(), game.getBoard().getBoardSize());
+                int colNum = gridRound(boardArea.getWidth(), e.getX(), game.getBoard().getBoardSize());
+                Move cMove = new PlayerMove(rowNum, colNum, game.getCurrentPlayer());
+                if (game.isValidMove(cMove)) {
+                    if (game.isEnd(cMove)) {
+                        game.getBoard().placeMove(cMove);
+                        String winSide = game.getCurrentPlayer().getColor()?"Black":"White";
+                        gp.getPromptText().setText(winSide + " wins");
+                        gp.repaint();
+                        boardArea.removeMouseListener(this);
+                    } else {
+                        game.getBoard().placeMove(cMove);
+                        gp.getPromptText().setText("");
+                        gp.repaint();
+                        game.nextTurn();
+                    }
+                } else {
+                    gp.getPromptText().setText("Invalid move");
+                    gp.repaint();
                 }
             }
 
@@ -120,23 +206,15 @@ public class Controller {
         loadOptions = new JDialog(mainFrame, "Load Game");
         JPanel loadPanel = new JPanel();
         File[] listSavefile = saveDir.listFiles();
-        String[] fileNames = null;
-        if(listSavefile != null){
-            fileNames = new String[listSavefile.length];
-            for (int i = 0; i<listSavefile.length;i++) {
-                fileNames[i] = listSavefile[i].getName();
-            }
-        }
-        JList<String> localFiles = new JList<>(fileNames);
+        JList<File> localFiles = new JList<>(listSavefile);
         localFiles.setFixedCellWidth(300);
         localFiles.setVisibleRowCount(10);
         localFiles.setPreferredSize(new Dimension(300, 250));
         JButton ldb = new JButton("load");
         ldb.addActionListener(e -> {
-            String fileName = localFiles.getSelectedValue();
-            try
-            {
-                FileInputStream myFileInputStream = new FileInputStream("./saves/"+fileName);
+            String fileName = localFiles.getSelectedValue().getName();
+            try {
+                FileInputStream myFileInputStream = new FileInputStream("./saves/" + fileName);
                 ObjectInputStream myObjectInputStream = new ObjectInputStream(myFileInputStream);
                 game = (Game) myObjectInputStream.readObject();
                 myObjectInputStream.close();
@@ -145,16 +223,23 @@ public class Controller {
                 mainFrame.revalidate();
                 mainFrame.repaint();
                 loadOptions.dispose();
-            }
-            catch (Exception ioe)
-            {
+            } catch (Exception ioe) {
                 System.out.println(ioe.getMessage());
             }
         });
         loadPanel.add(localFiles, BorderLayout.CENTER);
         loadPanel.add(ldb, BorderLayout.LINE_END);
         loadOptions.setContentPane(loadPanel);
-        loadOptions.setSize(400,400);
+        loadOptions.setSize(400, 400);
         loadOptions.setVisible(true);
+    }
+
+    private Tutorial[] generateTutorials() {
+        Tutorial[] tuts = new Tutorial[1];
+        Tutorial tut = new Tutorial("How to win the game?");
+        tut.setPlayers(null, null);
+        tut.setStartMessage("Hahaha");
+        tuts[0] = tut;
+        return tuts;
     }
 }
