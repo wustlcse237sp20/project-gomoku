@@ -12,8 +12,6 @@ public class EntryFrame extends JFrame {
 
     int panelWidth = 800;
     int panelHeight = 500;
-    Game game;
-    GamePage gamePanel;
     EntryPage entryPage;
     public EntryFrame(String title){
         super(title);
@@ -30,10 +28,6 @@ public class EntryFrame extends JFrame {
 
     public EntryPage getEntryPage(){
         return entryPage;
-    }
-
-    public GamePage getGamePanel(){
-        return gamePanel;
     }
 
 }

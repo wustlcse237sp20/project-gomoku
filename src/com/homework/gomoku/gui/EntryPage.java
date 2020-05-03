@@ -7,7 +7,6 @@ import java.awt.event.ActionListener;
 
 public class EntryPage extends JPanel {
 
-    JPanel tutorialPage;
     JButton newGameBut;
     JButton exitGameBut;
     JButton loadGameBut;
