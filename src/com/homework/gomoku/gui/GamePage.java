@@ -30,6 +30,10 @@ public class GamePage extends JPanel {
     public JButton colorChange;
     public JPanel leftWing;
     public JPanel rightWing;
+    JButton exitBut;
+    JButton mainBut;
+    JTextArea promptText;
+
     public GamePage(Game game) {
         super();
         this.game = game;
@@ -95,6 +99,17 @@ public class GamePage extends JPanel {
         rightWing.add(undoBut);
         rightWing.add(colorChange);
         rightWing.add(saveBut);
+        exitBut = new JButton("Exit Game");
+        mainBut = new JButton("Return to Menu");
+        promptText = new JTextArea();
+        promptText.setEditable(false);
+        promptText.setPreferredSize(new Dimension(120, 200));
+        promptText.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 22));
+        promptText.setLineWrap(true);
+        leftWing.add(mainBut);
+        leftWing.add(exitBut);
+
+        rightWing.add(promptText);
         this.add(leftWing, BorderLayout.LINE_START);
         this.add(rightWing, BorderLayout.LINE_END);
     }
@@ -115,4 +130,15 @@ public class GamePage extends JPanel {
     	return colorChange;
     }
 
+    public JButton getExitBut() {
+        return exitBut;
+    }
+
+    public JButton getMainBut() {
+        return mainBut;
+    }
+
+    public JTextArea getPromptText() {
+        return promptText;
+    }
 }

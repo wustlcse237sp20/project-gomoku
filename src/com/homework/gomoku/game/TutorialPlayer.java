@@ -3,8 +3,17 @@ package com.homework.gomoku.game;
 public class TutorialPlayer implements Player{
     
     boolean isBlack;
-    int row =7;
-    int col =7;
+    int[] rowSeq;
+    int[] colSeq;
+
+    public TutorialPlayer(boolean isBlack) {
+        this.isBlack = isBlack;
+    }
+
+    public void setMoves(int[] rows, int[] cols){
+        rowSeq = rows;
+        colSeq = cols;
+    }
 
     @Override
     public boolean getColor() {
@@ -12,14 +21,9 @@ public class TutorialPlayer implements Player{
     }
 
     @Override
-    public Move getMove(Board board) {
-        PlayerMove tutorialMove;
-        if (isBlack){
-            tutorialMove = new PlayerMove(row, col, this);
-        }else {
-            tutorialMove = new PlayerMove(row+1, col, this);
-            col ++;
-        }
-        return tutorialMove;
+    public Move getMove(Game game) {
+        int step = game.getNumTurn()/2;
+        System.out.println(step);
+        return new PlayerMove(rowSeq[step], colSeq[step], this);
     }
 }

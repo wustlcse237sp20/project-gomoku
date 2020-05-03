@@ -11,6 +11,7 @@ public class EntryPage extends JPanel {
     JButton newGameBut;
     JButton exitGameBut;
     JButton loadGameBut;
+    JButton tutorialBut;
 
     public EntryPage() {
         super(new GridBagLayout());
@@ -26,7 +27,7 @@ public class EntryPage extends JPanel {
         buttonsPanel.setLayout(buttonsLayout);
         newGameBut = new JButton("New Game");
         loadGameBut = new JButton("Load Game");
-        JButton tutorialBut = new JButton("Tutorial");
+        tutorialBut = new JButton("Tutorial");
         exitGameBut = new JButton("Exit to Desktop");
         buttonsPanel.add(newGameBut);
         buttonsPanel.add(loadGameBut);
@@ -52,4 +53,6 @@ public class EntryPage extends JPanel {
     }
 
     public JButton getLoadBut() { return loadGameBut; }
+
+    public JButton getTutorialBut() { return tutorialBut; }
 }
