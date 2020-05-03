@@ -9,7 +9,6 @@ public class TotalRuntime {
 		
 	}
 	public int totalRT() {
-		// TODO Auto-generated method stub
 		long endTime = System.nanoTime();
 		return (int) (endTime - startTime);
 	}

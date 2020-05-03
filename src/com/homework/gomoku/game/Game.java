@@ -9,6 +9,7 @@ public class Game implements Serializable {
     boolean isBlackTurn;
     Rule rule;
     int moveCount;
+    int timeSecondElapsed;
     public Game(Board board, Player ply1, Player ply2, Rule rule){
         this.board = board;
         player1 = ply1;
@@ -21,6 +22,19 @@ public class Game implements Serializable {
     public void nextTurn(){
         moveCount++;
         isBlackTurn = !isBlackTurn;
+    }
+
+    public void withDraw(){
+        moveCount--;
+        isBlackTurn = !isBlackTurn;
+    }
+
+    public void timeElapsed(int sec) {
+        timeSecondElapsed += sec;
+    }
+
+    public int getTimeSecondElapsed() {
+        return timeSecondElapsed;
     }
 
     public boolean getTurn(){

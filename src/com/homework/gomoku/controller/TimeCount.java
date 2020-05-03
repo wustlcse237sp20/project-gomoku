@@ -8,14 +8,8 @@ public class TimeCount extends TimerTask{
 	
 	int saver = 0;
 	public void run() {
-		if(saver>60) {
-			minD = saver/60;
-			secondsD = saver%60;
-		}
-		else {
-			minD = 0;
-			secondsD = saver;
-		}
 		saver = saver+1;
+		minD = saver/60;
+		secondsD = saver%60;
 	}
 }
