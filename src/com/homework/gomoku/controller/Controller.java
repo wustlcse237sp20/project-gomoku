@@ -102,7 +102,7 @@ public class Controller {
 
         gameTimer.scheduleAtFixedRate(timerUpdater, 0, 1000);
         gamePage.getSaveBut().addActionListener(e -> {
-            gamePage.getPromptText().setText("Your can't save a tutorial game");
+            gamePage.getPromptText().setText("Your can't save an AI game");
             gamePage.repaint();
         });
         ActionListener undoListener = e -> {
@@ -141,6 +141,11 @@ public class Controller {
                         gamePage.getPromptText().setText("");
                         game.nextTurn();
                         Move aiMove = game.getCurrentPlayer().getMove(game);
+                        if (game.isEnd(aiMove)){
+                            gamePage.getPromptText().setText("White wins");
+                            gamePage.getUndoBut().removeActionListener(undoListener);
+                            boardArea.removeMouseListener(this);
+                        }
                         game.getBoard().placeMove(aiMove);
                         game.nextTurn();
                         gamePage.updateInfoBar();
