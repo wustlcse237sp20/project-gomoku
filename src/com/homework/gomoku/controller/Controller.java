@@ -19,11 +19,13 @@ import java.util.Timer;
 import java.text.SimpleDateFormat;
 import javax.swing.*;
 
+import static com.homework.gomoku.game.GomokuUtil.gridRound;
+
 public class Controller {
 
     EntryFrame mainFrame;
     Game game;
-    GamePage gp;
+    GamePage gamePage;
     JDialog loadOptions;
     File saveDir;
 
@@ -40,7 +42,7 @@ public class Controller {
         mainFrame.getEntryPage().getNewGameBut().addActionListener(e -> {
             game = new Game(new TwoPlayerBoard(15), new HumanPlayer(true), new HumanPlayer(false), new TwoPlayerRule());
             makeNewGame();
-            mainFrame.setContentPane(gp);
+            mainFrame.setContentPane(gamePage);
             mainFrame.revalidate();
             mainFrame.repaint();
         });
@@ -50,47 +52,144 @@ public class Controller {
 
         mainFrame.getEntryPage().getTutorialBut().addActionListener(e -> {
             Tutorial[] tuts = generateTutorials();
-            TutorialPane tp = new TutorialPane(tuts);
+            TutorialPane tutorialDialog = new TutorialPane(tuts);
             for (Tutorial t : tuts) {
                 JButton tutBut = new JButton(t.getTutName());
-                tp.add(tutBut);
+                tutorialDialog.add(tutBut);
                 tutBut.addActionListener(e1 -> {
                     game = new Game(new TwoPlayerBoard(15), t.getPlyr1(), t.getPlyr2(), new TwoPlayerRule());
                     makeTutGame(t);
-                    mainFrame.setContentPane(gp);
+                    mainFrame.setContentPane(gamePage);
                     mainFrame.revalidate();
                     mainFrame.repaint();
-                    tp.dispose();
+                    tutorialDialog.dispose();
                 });
             }
-            tp.setVisible(true);
+            JButton aiBut = new JButton("Defensive AI");
+            tutorialDialog.add(aiBut);
+            aiBut.addActionListener(e1 -> {
+                game = new Game(new TwoPlayerBoard(15), new HumanPlayer(true), new AiPlayer(false), new TwoPlayerRule());
+                makeAiGame();
+                mainFrame.setContentPane(gamePage);
+                mainFrame.revalidate();
+                mainFrame.repaint();
+                tutorialDialog.dispose();
+            });
+            tutorialDialog.setVisible(true);
         });
     }
 
-    private int gridRound(int length, int loc, int numInt) {
-        int rem = length % numInt;
-        int gap = length / numInt;
-        return loc > rem * (gap + 1) ? (int) Math.round((double) loc / (gap + 1)) :
-                (int) Math.round((double) (loc - rem * (gap + 1)) / gap) + rem;
+    public class TimerUpdater extends TimerTask {
+        @Override
+        public void run() {
+            game.timeElapsed(1);
+            int timeElapsed = game.getTimeSecondElapsed();
+            int seconds = timeElapsed % 60;
+            int minutes = timeElapsed / 60;
+            if (seconds < 10) {
+                gamePage.getTickerUpdate().setText(minutes + ": 0" + seconds);
+            } else {
+                gamePage.getTickerUpdate().setText(minutes + ": " + seconds);
+            }
+        }
     }
 
+    private void makeAiGame() {
+        gamePage = new GamePage(game);
+
+        Timer gameTimer = new Timer();
+        TimerUpdater timerUpdater = new TimerUpdater();
+
+        gameTimer.scheduleAtFixedRate(timerUpdater, 0, 1000);
+        gamePage.getSaveBut().addActionListener(e -> {
+            gamePage.getPromptText().setText("Your can't save a tutorial game");
+            gamePage.repaint();
+        });
+        ActionListener undoListener = e -> {
+            Move lastMove = game.getBoard().undoMove();
+            if (lastMove != null) {
+                Move last2Move = game.getBoard().undoMove();
+                if(last2Move!=null) {
+                    game.withDraw();
+                    game.withDraw();
+                    gamePage.repaint();
+                    gamePage.updateInfoBar();
+                }
+            }
+        };
+        gamePage.getUndoBut().addActionListener(undoListener);
+        setDefaultButtons(gameTimer);
+        JPanel boardArea = gamePage.getBoardArea();
+
+        boardArea.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int rowNum = gridRound(boardArea.getHeight(), e.getY(), game.getBoard().getBoardSize());
+                int colNum = gridRound(boardArea.getWidth(), e.getX(), game.getBoard().getBoardSize());
+                Move cMove = new PlayerMove(rowNum, colNum, game.getCurrentPlayer());
+                if (game.isValidMove(cMove)) {
+                    if (game.isEnd(cMove)) {
+                        game.getBoard().placeMove(cMove);
+                        String winSide = game.getCurrentPlayer().getColor() ? "Black" : "White";
+                        gamePage.getPromptText().setText(winSide + " wins");
+                        gameTimer.cancel();
+                        gamePage.repaint();
+                        gamePage.getUndoBut().removeActionListener(undoListener);
+                        boardArea.removeMouseListener(this);
+                    } else {
+                        game.getBoard().placeMove(cMove);
+                        gamePage.getPromptText().setText("");
+                        game.nextTurn();
+                        Move aiMove = game.getCurrentPlayer().getMove(game);
+                        game.getBoard().placeMove(aiMove);
+                        game.nextTurn();
+                        gamePage.updateInfoBar();
+                        gamePage.repaint();
+                    }
+                } else {
+                    gamePage.getPromptText().setText("Invalid move");
+                    gamePage.repaint();
+                }
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        });
+    }
 
     private void makeTutGame(Tutorial tut) {
-        gp = new GamePage(game);
-        gp.getSaveBut().addActionListener(e -> {
-            gp.getPromptText().setText("Your can't save a tutorial game");
-            gp.repaint();
+        gamePage = new GamePage(game);
+        gamePage.getSaveBut().addActionListener(e -> {
+            gamePage.getPromptText().setText("Your can't save a tutorial game");
+            gamePage.repaint();
         });
-        gp.getExitBut().addActionListener(e -> {
+        gamePage.getExitBut().addActionListener(e -> {
             mainFrame.dispose();
         });
-        gp.getMainBut().addActionListener(e -> {
+        gamePage.getMainBut().addActionListener(e -> {
             mainFrame.setContentPane(mainFrame.getEntryPage());
             mainFrame.revalidate();
             mainFrame.repaint();
         });
-        gp.getPromptText().setText(tut.getStartMessage());
-        JPanel boardArea = gp.getBoardArea();
+        gamePage.getPromptText().setText(tut.getStartMessage());
+        JPanel boardArea = gamePage.getBoardArea();
         boardArea.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -100,20 +199,20 @@ public class Controller {
                 if (rowNum == expectedMove.getRow() && colNum == expectedMove.getCol()) {
                     if (game.isEnd(expectedMove)) {
                         game.getBoard().placeMove(expectedMove);
-                        gp.getPromptText().setText("You win");
-                        gp.repaint();
+                        gamePage.getPromptText().setText("You win");
+                        gamePage.repaint();
                         boardArea.removeMouseListener(this);
                     } else {
                         game.getBoard().placeMove(expectedMove);
-                        gp.getPromptText().setText(tut.getInGameMessage(game.getNumTurn() / 2));
+                        gamePage.getPromptText().setText(tut.getInGameMessage(game.getNumTurn() / 2));
                         game.nextTurn();
                         expectedMove = game.getCurrentPlayer().getMove(game);
                         game.getBoard().placeMove(expectedMove);
                         game.nextTurn();
-                        gp.repaint();
+                        gamePage.repaint();
                     }
                 } else {
-                    gp.getPromptText().setText("You placed on (" + rowNum + "," + colNum + "), place on (" + expectedMove.getRow() + "," + expectedMove.getCol() + ") to win");
+                    gamePage.getPromptText().setText("You placed on (" + rowNum + "," + colNum + "), place on (" + expectedMove.getRow() + "," + expectedMove.getCol() + ") to win");
                 }
             }
 
@@ -140,63 +239,26 @@ public class Controller {
     }
 
     private void makeNewGame() {
-        gp = new GamePage(game);
+        gamePage = new GamePage(game);
 
-        Timer timer = new Timer();
-        TimerTask helloRunnable = new TimerTask() {
-            public void run() {
-                game.timeElapsed(1);
-                int timeElapsed = game.getTimeSecondElapsed();
-                int seconds = timeElapsed % 60;
-                int minutes = timeElapsed / 60;
-                if (seconds < 10) {
-                    gp.getTickerUpdate().setText(minutes + ": 0" + seconds);
-                } else {
-                    gp.getTickerUpdate().setText(minutes + ": " + seconds);
-                }
-            }
-        };
+        Timer gameTimer = new Timer();
+        TimerUpdater timerUpdater = new TimerUpdater();
 
-        timer.scheduleAtFixedRate(helloRunnable, 0, 1000);
-        gp.getSaveBut().addActionListener(e -> {
-            try {
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss");
-                FileOutputStream fos = new FileOutputStream("./saves/" + sdf.format(System.currentTimeMillis()) + ".ser");
-                ObjectOutputStream myObjectOutputStream = new ObjectOutputStream(fos);
-                myObjectOutputStream.writeObject(game);
-                myObjectOutputStream.close();
-                timer.cancel();
-                mainFrame.setContentPane(mainFrame.getEntryPage());
-                mainFrame.revalidate();
-                mainFrame.repaint();
-            } catch (Exception ioe) {
-                System.out.println(ioe.getMessage());
-            }
-        });
+        gameTimer.scheduleAtFixedRate(timerUpdater, 0, 1000);
 
-        //complete the undo action
-        gp.getUndoBut().addActionListener(e -> {
+        initSaveBut(gameTimer);
+        ActionListener undoListener = e -> {
             Move lastMove = game.getBoard().undoMove();
             if (lastMove != null) {
                 game.withDraw();
-                gp.repaint();
-                gp.updateInfoBar();
+                gamePage.repaint();
+                gamePage.updateInfoBar();
             }
-        });
-        gp.getExitBut().addActionListener(e -> {
-            timer.cancel();
-            mainFrame.dispose();
-        });
-        gp.getMainBut().addActionListener(e -> {
-            timer.cancel();
-            mainFrame.setContentPane(mainFrame.getEntryPage());
-            mainFrame.revalidate();
-            mainFrame.repaint();
-        });
-        gp.getPromptText().setText("Enjoy your game");
-
-        JPanel boardArea = gp.getBoardArea();
-
+        };
+        //complete the undo action
+        gamePage.getUndoBut().addActionListener(undoListener);
+        setDefaultButtons(gameTimer);
+        JPanel boardArea = gamePage.getBoardArea();
         boardArea.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -207,20 +269,21 @@ public class Controller {
                     if (game.isEnd(cMove)) {
                         game.getBoard().placeMove(cMove);
                         String winSide = game.getCurrentPlayer().getColor() ? "Black" : "White";
-                        gp.getPromptText().setText(winSide + " wins");
-                        timer.cancel();
-                        gp.repaint();
+                        gamePage.getPromptText().setText(winSide + " wins");
+                        gameTimer.cancel();
+                        gamePage.repaint();
+                        gamePage.getUndoBut().removeActionListener(undoListener);
                         boardArea.removeMouseListener(this);
                     } else {
                         game.getBoard().placeMove(cMove);
-                        gp.getPromptText().setText("");
-                        gp.repaint();
+                        gamePage.getPromptText().setText("");
+                        gamePage.repaint();
                         game.nextTurn();
-                        gp.updateInfoBar();
+                        gamePage.updateInfoBar();
                     }
                 } else {
-                    gp.getPromptText().setText("Invalid move");
-                    gp.repaint();
+                    gamePage.getPromptText().setText("Invalid move");
+                    gamePage.repaint();
                 }
             }
 
@@ -263,7 +326,7 @@ public class Controller {
                 game = (Game) myObjectInputStream.readObject();
                 myObjectInputStream.close();
                 makeNewGame();
-                mainFrame.setContentPane(gp);
+                mainFrame.setContentPane(gamePage);
                 mainFrame.revalidate();
                 mainFrame.repaint();
                 loadOptions.dispose();
@@ -276,6 +339,39 @@ public class Controller {
         loadOptions.setContentPane(loadPanel);
         loadOptions.setSize(400, 400);
         loadOptions.setVisible(true);
+    }
+
+    private void setDefaultButtons(Timer gameTimer) {
+        gamePage.getExitBut().addActionListener(e -> {
+            gameTimer.cancel();
+            mainFrame.dispose();
+        });
+        gamePage.getMainBut().addActionListener(e -> {
+            gameTimer.cancel();
+            mainFrame.setContentPane(mainFrame.getEntryPage());
+            mainFrame.revalidate();
+            mainFrame.repaint();
+        });
+        gamePage.getPromptText().setText("Enjoy your game");
+
+    }
+
+    private void initSaveBut(Timer gameTimer) {
+        gamePage.getSaveBut().addActionListener(e -> {
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss");
+                FileOutputStream fos = new FileOutputStream("./saves/" + sdf.format(System.currentTimeMillis()) + ".ser");
+                ObjectOutputStream myObjectOutputStream = new ObjectOutputStream(fos);
+                myObjectOutputStream.writeObject(game);
+                myObjectOutputStream.close();
+                gameTimer.cancel();
+                mainFrame.setContentPane(mainFrame.getEntryPage());
+                mainFrame.revalidate();
+                mainFrame.repaint();
+            } catch (Exception ioe) {
+                System.out.println(ioe.getMessage());
+            }
+        });
     }
 
     private Tutorial[] generateTutorials() {

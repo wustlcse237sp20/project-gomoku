@@ -26,7 +26,7 @@ public class EntryPage extends JPanel {
         buttonsPanel.setLayout(buttonsLayout);
         newGameBut = new JButton("New Game");
         loadGameBut = new JButton("Load Game");
-        tutorialBut = new JButton("Tutorial");
+        tutorialBut = new JButton("Tutorial & AI");
         exitGameBut = new JButton("Exit to Desktop");
         buttonsPanel.add(newGameBut);
         buttonsPanel.add(loadGameBut);
