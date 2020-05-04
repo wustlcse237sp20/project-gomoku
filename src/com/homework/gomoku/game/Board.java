@@ -5,4 +5,5 @@ public interface Board {
     public Boolean placeMove(Move move);
     public Move undoMove();
     public int getBoardSize();
+    public Move getLasMove();
 }
