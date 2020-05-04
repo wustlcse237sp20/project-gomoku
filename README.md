@@ -1,5 +1,21 @@
 # cse237-project
 
+# 05/04/2020
+
+## What user stories were completed this iteration?
+Many users stories are completed in this iteration, including:
+- A user is able to play with a virtual computer player instead of only playing with another player in Tutorial & AI mode.
+- A user is able to save and load information of many past games so that the game can be stopped and reloaded when the user wishes to.
+- As a user, I can see a more well-organized interface.
+- A user is able to do some interface modification(specifically, manage background color).
+- A user is able to see the elapsed time from the start of the game so that they can monitor the time spent.
+
+## Is there anything that you implemented but doesn't currently work?
+- Currently, everything we implemented is working. However, the save/load feature is disabled for AI game, as we didn't find a proper way to restore an AI player based on our current AI algorithm.
+
+## What commands are needed to compile and run your code from the command line (or better yet, provide a script that people can use to run your program!)
+- Get into repo root directory and simply use "./run.sh" shell command to start the game.
+
 # 04/20/2020
 
 ## What user stories were completed this iteration?
