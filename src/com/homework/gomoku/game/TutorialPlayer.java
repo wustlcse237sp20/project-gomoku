@@ -23,7 +23,6 @@ public class TutorialPlayer implements Player{
     @Override
     public Move getMove(Game game) {
         int step = game.getNumTurn()/2;
-        System.out.println(step);
         return new PlayerMove(rowSeq[step], colSeq[step], this);
     }
 }
