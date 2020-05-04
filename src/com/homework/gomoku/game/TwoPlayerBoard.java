@@ -49,5 +49,10 @@ public class TwoPlayerBoard implements Board, Serializable {
         return boardSize;
     }
 
+    @Override
+    public Move getLasMove(){
+        return moveSeq.get(moveSeq.size()-1);
+    }
+
 
 }
