@@ -9,9 +9,9 @@ public class GomokuUtilTest {
     @Test
     public void isInBoardTest() {
         Board board = new TwoPlayerBoard(15);
-        assertTrue(GomokuUtil.isInBoard(board, 0, 0));
-        assertTrue(GomokuUtil.isInBoard(board, 0, 14));
-        assertTrue(GomokuUtil.isInBoard(board, 14, 0));
+        assertFalse(GomokuUtil.isInBoard(board, 0, 0));
+        assertFalse(GomokuUtil.isInBoard(board, 0, 14));
+        assertFalse(GomokuUtil.isInBoard(board, 14, 0));
         assertTrue(GomokuUtil.isInBoard(board, 14, 14));
         assertTrue(GomokuUtil.isInBoard(board, 7, 6));
         assertFalse(GomokuUtil.isInBoard(board, -1, 0));
@@ -27,8 +27,8 @@ public class GomokuUtilTest {
         board.placeMove(new PlayerMove(5, 5, nullPlayer));
         board.placeMove(new PlayerMove(5, 6, nullPlayer));
         board.placeMove(new PlayerMove(5, 7, nullPlayer));
-        assertTrue(GomokuUtil.isPieceOnDir(board, board.getLasMove(), GomokuUtil.Direction.EAST, 3));
-        assertFalse(GomokuUtil.isPieceOnDir(board, board.getLasMove(), GomokuUtil.Direction.NORTH, 3));
+        assertTrue(GomokuUtil.isPieceOnDir(board, board.getLasMove(), GomokuUtil.Direction.NORTH, 3));
+        assertFalse(GomokuUtil.isPieceOnDir(board, board.getLasMove(), GomokuUtil.Direction.EAST, 3));
         assertFalse(GomokuUtil.isPieceOnDir(board, board.getLasMove(), GomokuUtil.Direction.EAST, 4));
     }
 
@@ -39,6 +39,7 @@ public class GomokuUtilTest {
         assertFalse(index > 0 || index < 0);
     }
 
+    @Test
     public void gridRoundTest2() {
         int index = GomokuUtil.gridRound(100, 50, 10);
         assertTrue(index == 5);

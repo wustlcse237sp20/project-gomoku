@@ -12,7 +12,7 @@ public class AiPlayerTest {
         Player nullPlayer = new HumanPlayer(true);
         Player aiPlayer = new AiPlayer(false);
         Rule tpRule = new TwoPlayerRule();
-        Game game = new Game(board, nullPlayer, aiPlayer);
+        Game game = new Game(board, nullPlayer, aiPlayer, tpRule);
         board.placeMove(new PlayerMove(5,5,nullPlayer));
         board.placeMove(new PlayerMove(5,6,nullPlayer));
         board.placeMove(new PlayerMove(5,7,nullPlayer));
@@ -32,7 +32,7 @@ public class AiPlayerTest {
         Player nullPlayer = new HumanPlayer(true);
         Player aiPlayer = new AiPlayer(false);
         Rule tpRule = new TwoPlayerRule();
-        Game game = new Game(board, nullPlayer, aiPlayer);
+        Game game = new Game(board, nullPlayer, aiPlayer, tpRule);
         board.placeMove(new PlayerMove(5,5,nullPlayer));
         board.placeMove(new PlayerMove(5,6,nullPlayer));
         board.placeMove(new PlayerMove(5,7,nullPlayer));
