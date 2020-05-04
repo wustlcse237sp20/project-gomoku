@@ -55,10 +55,10 @@ public class GomokuUtil {
         return count >= num;
     }
 
-    public static int gridRound(int length, int loc, int numInt) {
-        int rem = length % numInt;
-        int gap = length / numInt;
-        return loc > rem * (gap + 1) ? (int) Math.round((double) loc / (gap + 1)) :
-                (int) Math.round((double) (loc - rem * (gap + 1)) / gap) + rem;
+    public static int gridRound(int length, int mouseLoc, int numInterval) {
+        int reminder = length % numInterval;
+        int intervals = length / numInterval;
+        return mouseLoc > reminder * (intervals + 1) ? (int) Math.round((double) mouseLoc / (intervals + 1)) :
+                (int) Math.round((double) (mouseLoc - reminder * (intervals + 1)) / intervals) + reminder;
     }
 }
