@@ -1,21 +1,15 @@
 package com.homework.gomoku.game;
 
+import static com.homework.gomoku.game.GomokuUtil.isInBoard;
+import static com.homework.gomoku.game.GomokuUtil.isPieceOnDir;
+import com.homework.gomoku.game.GomokuUtil.Direction;
+
 public class AiPlayer implements Player{
     
     boolean isBlack;
-    int[] rowSeq;
-    int[] colSeq;
-    enum Direction {
-        EAST, NORTH, NORTHEAST, NORTHWEST
-    }
 
     public AiPlayer(boolean isBlack) {
         this.isBlack = isBlack;
-    }
-
-    public void setMoves(int[] rows, int[] cols){
-        rowSeq = rows;
-        colSeq = cols;
     }
 
     @Override
@@ -25,14 +19,9 @@ public class AiPlayer implements Player{
 
     @Override
     public Move getMove(Game game) {
-        // int step = game.getNumTurn()/2;
-        // System.out.println(step);
-        // return new PlayerMove(rowSeq[step], colSeq[step], this);
-        // int col = game.getBoard().getLasMove().getCol();
-        // int row = game.getBoard().getLasMove().getRow();
         Board board = game.getBoard();
         Move move = game.getBoard().getLasMove();
-        int[] index = new int[2];
+        int[] index;
         Move aiMove;
         for (Direction dir : Direction.values()){
             if (isPieceOnDir(board, move, dir, 3)){
@@ -65,55 +54,6 @@ public class AiPlayer implements Player{
         return aiMove;
     }
 
-    private boolean isPieceOnDir(Board board, Move move, Direction dir, int num) {
-        int rowIncrement = 0;
-        int colIncrement = 0;
-        switch (dir) {
-            case EAST:
-                rowIncrement = 1;
-                break;
-            case NORTH:
-                colIncrement = 1;
-                break;
-            case NORTHEAST:
-                rowIncrement = 1;
-                colIncrement = 1;
-                break;
-            case NORTHWEST:
-                rowIncrement = 1;
-                colIncrement = -1;
-        }
-        int col = move.getCol();
-        int row = move.getRow();
-        boolean playerColor = move.getPlayer().getColor();
-        int count = 1;
-        for (int i = 1; i < 5; i++) {
-            int nei_row = row + i * rowIncrement;
-            int nei_col = col + i * colIncrement;
-            if (isInBoard(board, nei_row, nei_col) && board.getPieceAt(nei_row, nei_col) != null
-                    && board.getPieceAt(nei_row, nei_col).getPlayer().getColor() == playerColor) {
-                count++;
-            } else {
-                break;
-            }
-        }
-        for (int i = 1; i < 5; i++) {
-            int nei_row = row - i * rowIncrement;
-            int nei_col = col - i * colIncrement;
-            if (isInBoard(board, nei_row, nei_col) && board.getPieceAt(nei_row, nei_col) != null
-                    && board.getPieceAt(nei_row, nei_col).getPlayer().getColor() == playerColor) {
-                count++;
-            } else {
-                break;
-            }
-        }
-        return count >= num;
-    }
-
-    private boolean isInBoard(Board board, int row, int col) {
-        return row < board.getBoardSize() && row > 0 && col < board.getBoardSize() && col >= 0;
-    }
-
     private int[] nextAvailableCell(Board board, Move move, Direction dir){
         int[] posIndex = new int[2];
         int rowIncrement = 0;
@@ -139,13 +79,11 @@ public class AiPlayer implements Player{
         int count2 = 0;
         boolean validPos1 = false;
         boolean validPos2 = false;
-        boolean playerColor = move.getPlayer().getColor();
-        boolean AiColor = !playerColor;
         for (int i = 1; i < 5; i++){
             int nei_row = row + i * rowIncrement;
             int nei_col = col + i * colIncrement;
             count1 ++;
-            if (isInBoard(board, nei_row, nei_col) && board.getPieceAt(nei_row, nei_col) != null &&board.getPieceAt(nei_row, nei_col).getPlayer().getColor() == AiColor){
+            if (isInBoard(board, nei_row, nei_col) && board.getPieceAt(nei_row, nei_col) != null &&board.getPieceAt(nei_row, nei_col).getPlayer().getColor() == isBlack){
                 break;
             }
             if (isInBoard(board, nei_row, nei_col) && board.getPieceAt(nei_row, nei_col) == null){
@@ -156,8 +94,8 @@ public class AiPlayer implements Player{
         for (int i = 1; i < 5; i++){
             int nei_row = row - i * rowIncrement;
             int nei_col = col - i * colIncrement;
-            count2 ++;
-            if (isInBoard(board, nei_row, nei_col) && board.getPieceAt(nei_row, nei_col) != null &&board.getPieceAt(nei_row, nei_col).getPlayer().getColor() == AiColor){
+            count2 --;
+            if (isInBoard(board, nei_row, nei_col) && board.getPieceAt(nei_row, nei_col) != null &&board.getPieceAt(nei_row, nei_col).getPlayer().getColor() == isBlack){
                 break;
             }
             if (isInBoard(board, nei_row, nei_col) && board.getPieceAt(nei_row, nei_col) == null){

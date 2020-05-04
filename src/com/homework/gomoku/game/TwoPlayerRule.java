@@ -2,72 +2,23 @@ package com.homework.gomoku.game;
 
 import java.io.Serializable;
 
-public class TwoPlayerRule implements Rule, Serializable {
+import static com.homework.gomoku.game.GomokuUtil.isInBoard;
+import static com.homework.gomoku.game.GomokuUtil.isPieceOnDir;
+import com.homework.gomoku.game.GomokuUtil.Direction;
 
-    enum Direction {
-        EAST, NORTH, NORTHEAST, NORTHWEST
-    }
+public class TwoPlayerRule implements Rule, Serializable {
 
     @Override
     public boolean isEnd(Board board, Move move) {
-        return isFiveOnDir(board, move, Direction.EAST) ||
-                isFiveOnDir(board, move, Direction.NORTHEAST) ||
-                isFiveOnDir(board, move, Direction.NORTH) ||
-                isFiveOnDir(board, move, Direction.NORTHWEST);
-    }
-
-    private boolean isInBoard(Board board, int row, int col) {
-        return row < board.getBoardSize() && row > 0 && col < board.getBoardSize() && col >= 0;
-    }
-
-    public boolean isFiveOnDir(Board board, Move move, Direction dir) {
-        int rowIncrement = 0;
-        int colIncrement = 0;
-        switch (dir) {
-            case EAST:
-                rowIncrement = 1;
-                break;
-            case NORTH:
-                colIncrement = 1;
-                break;
-            case NORTHEAST:
-                rowIncrement = 1;
-                colIncrement = 1;
-                break;
-            case NORTHWEST:
-                rowIncrement = 1;
-                colIncrement = -1;
-        }
-        int col = move.getCol();
-        int row = move.getRow();
-        boolean playerColor = move.getPlayer().getColor();
-        int count = 1;
-        for (int i = 1; i < 5; i++) {
-            int nei_row = row + i * rowIncrement;
-            int nei_col = col + i * colIncrement;
-            if (isInBoard(board, nei_row, nei_col) && board.getPieceAt(nei_row, nei_col) != null
-                    && board.getPieceAt(nei_row, nei_col).getPlayer().getColor() == playerColor) {
-                count++;
-            } else {
-                break;
-            }
-        }
-        for (int i = 1; i < 5; i++) {
-            int nei_row = row - i * rowIncrement;
-            int nei_col = col - i * colIncrement;
-            if (isInBoard(board, nei_row, nei_col) && board.getPieceAt(nei_row, nei_col) != null
-                    && board.getPieceAt(nei_row, nei_col).getPlayer().getColor() == playerColor) {
-                count++;
-            } else {
-                break;
-            }
-        }
-        return count == 5;
+        return isPieceOnDir(board, move, Direction.EAST, 5) ||
+                isPieceOnDir(board, move, Direction.NORTHEAST, 5) ||
+                isPieceOnDir(board, move, Direction.NORTH, 5) ||
+                isPieceOnDir(board, move, Direction.NORTHWEST, 5);
     }
 
     @Override
     public boolean isValidMove(Board board, Move move) {
-        return isOverlap(board, move) && ruleBreaker(board, move);
+        return isOverlap(board, move) && ruleBreaker(board, move) && isInBoard(board, move.getRow(), move.getCol());
     }
 
     public boolean isOverlap(Board board, Move move) {

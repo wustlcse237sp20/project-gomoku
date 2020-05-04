@@ -143,10 +143,6 @@ public class GamePage extends JPanel {
         return undoBut;
     }
 
-    public JButton getColorChangeBut() {
-        return colorChange;
-    }
-
     public JButton getExitBut() {
         return exitBut;
     }

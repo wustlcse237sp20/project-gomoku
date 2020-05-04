@@ -1,9 +1,9 @@
 package com.homework.gomoku.game;
 
 public interface Board {
-    public Move getPieceAt(int row, int col);
-    public Boolean placeMove(Move move);
-    public Move undoMove();
-    public int getBoardSize();
-    public Move getLasMove();
+    Move getPieceAt(int row, int col);
+    Boolean placeMove(Move move);
+    Move undoMove();
+    int getBoardSize();
+    Move getLasMove();
 }
