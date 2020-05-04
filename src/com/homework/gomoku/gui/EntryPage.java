@@ -7,10 +7,10 @@ import java.awt.event.ActionListener;
 
 public class EntryPage extends JPanel {
 
-    JPanel tutorialPage;
     JButton newGameBut;
     JButton exitGameBut;
     JButton loadGameBut;
+    JButton tutorialBut;
 
     public EntryPage() {
         super(new GridBagLayout());
@@ -26,12 +26,13 @@ public class EntryPage extends JPanel {
         buttonsPanel.setLayout(buttonsLayout);
         newGameBut = new JButton("New Game");
         loadGameBut = new JButton("Load Game");
-        JButton tutorialBut = new JButton("Tutorial");
+        tutorialBut = new JButton("Tutorial & AI");
         exitGameBut = new JButton("Exit to Desktop");
         buttonsPanel.add(newGameBut);
         buttonsPanel.add(loadGameBut);
         buttonsPanel.add(tutorialBut);
         buttonsPanel.add(exitGameBut);
+        
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 0;
@@ -39,6 +40,7 @@ public class EntryPage extends JPanel {
         c.gridx = 0;
         c.gridy = 1;
         this.add(buttonsPanel, c);
+
     }
 
     public JButton getNewGameBut(){
@@ -50,4 +52,6 @@ public class EntryPage extends JPanel {
     }
 
     public JButton getLoadBut() { return loadGameBut; }
+
+    public JButton getTutorialBut() { return tutorialBut; }
 }

@@ -8,16 +8,33 @@ public class Game implements Serializable {
     Player player2;
     boolean isBlackTurn;
     Rule rule;
+    int moveCount;
+    int timeSecondElapsed;
     public Game(Board board, Player ply1, Player ply2, Rule rule){
         this.board = board;
         player1 = ply1;
         player2 = ply2;
         isBlackTurn = true;
         this.rule = rule;
+        moveCount = 0;
     }
 
     public void nextTurn(){
+        moveCount++;
         isBlackTurn = !isBlackTurn;
+    }
+
+    public void withDraw(){
+        moveCount--;
+        isBlackTurn = !isBlackTurn;
+    }
+
+    public void timeElapsed(int sec) {
+        timeSecondElapsed += sec;
+    }
+
+    public int getTimeSecondElapsed() {
+        return timeSecondElapsed;
     }
 
     public boolean getTurn(){
@@ -46,5 +63,9 @@ public class Game implements Serializable {
 
     public boolean isEnd(Move move){
         return rule.isEnd(board, move);
+    }
+
+    public int getNumTurn(){
+        return moveCount;
     }
 }
